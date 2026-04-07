@@ -8,5 +8,16 @@ class Opinion(db.Model):
     title = db.Column(db.String(128), nullable=False)
     text = db.Column(db.Text, unique=True, nullable=False)
     source = db.Column(db.String(256))
+    images = db.Column(db.JSON)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     added_by = db.Column(db.String(64))
+    # Добавить в модель метод-десериализатор.
+    # На вход метод принимает словарь data, полученный из JSON в запросе.
+    def from_dict(self, data):
+        # Для каждого поля модели, которое можно заполнить...
+        for field in ['title', 'text', 'source', 'added_by']:
+            # ...выполнить проверку — есть ли ключ с таким же именем в словаре.
+            if field in data:
+                # Если есть, добавить значение из словаря
+                # в соответствующее поле объекта модели.
+                setattr(self, field, data[field])
